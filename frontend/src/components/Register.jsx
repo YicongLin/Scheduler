@@ -1,10 +1,13 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+
+    const navigate = useNavigate();
 
     // API call to register user
     const register = () => {
@@ -25,7 +28,7 @@ const Register = () => {
             
             <br />
 
-            <div>Already have an account? <b>Sign in</b></div><br />
+            <div>Already have an account? <b onClick={() => navigate('/login')}>Sign in</b></div><br />
 
             <button type="button" onClick={register}>Register</button>
         </>
