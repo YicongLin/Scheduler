@@ -14,18 +14,30 @@ const Login = () => {
     
     return (
         <>
-            <h2>Login</h2>
-        
-            <div>Email</div>
-                <input type="text" value={email} onChange={val => {setEmail(val.target.value)}} /><br />
-            <div>Password</div>
-                <input type="password" value={password} onChange={val => {setPassword(val.target.value)}}/><br />
-            
-            <br />
+            <div className="login-container">
+                <div className="lhs login">
+                    <img src="timetravel.jpg" alt="" />
+                </div>
 
-            <div>Haven't got an account? <b onClick={() => navigate('/register')}>Sign up</b></div><br />
+                <div className="rhs login">
+                    <form className="register-form" onSubmit={login}>
+                        <h2>Login</h2>
 
-            <button type="button" onClick={login}>Login</button>
+                        <label>Email</label>
+                        <input type="text" value={email} onChange={val => setEmail(val.target.value)} /> <br />
+
+                        <label>Password</label>
+                        <input type="password" value={password} onChange={val => setPassword(val.target.value)} /> 
+                
+                        <label className="forgot">Forgot password?</label>
+
+                        <br />
+                        <div>Haven't got an account? <b className="sign" onClick={() => navigate('/register')}>Sign up</b></div><br />
+
+                        <button type="submit" >Login</button>
+                    </form>
+                </div>
+            </div>
         </>
     );
 };

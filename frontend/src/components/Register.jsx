@@ -16,21 +16,36 @@ const Register = () => {
     
     return (
         <>
-            <h2>Register</h2>
-            <div>Username</div>
-                <input type="text" value={username} onChange={val => {setUsername(val.target.value)}}/><br />
-            <div>Email</div>
-                <input type="text" value={email} onChange={val => {setEmail(val.target.value)}} /><br />
-            <div>Password</div>
-                <input type="password" value={password} onChange={val => {setPassword(val.target.value)}}/><br />
-            <div>Confirm Password</div>
-                <input type="password" value={confirmPassword} onChange={val => {setConfirmPassword(val.target.value)}}/><br />
-            
-            <br />
+            <div className="register-container">
+                <div className="lhs register">
+                    <img src="timetravel.jpg" alt="" />
+                </div>
 
-            <div>Already have an account? <b onClick={() => navigate('/login')}>Sign in</b></div><br />
+                <div className="rhs register">
 
-            <button type="button" onClick={register}>Register</button>
+                    <form className="register-form" onSubmit={register}>
+                        <h2 className="register-heading">Register</h2>
+                        <label>Username</label> 
+                        <input type="text" value={username} onChange={val => setUsername(val.target.value)} /> <br />
+
+                        <label>Email</label>
+                        <input type="text" value={email} onChange={val => setEmail(val.target.value)} /> <br />
+
+                        <label>Password</label>
+                        <input type="password" value={password} onChange={val => setPassword(val.target.value)} /> <br />
+
+                        <label>Confirm Password</label>
+                        <input type="password" value={confirmPassword} onChange={val => setConfirmPassword(val.target.value)} /> <br />
+
+                        <br />
+                        <div>Already have an account? <b className="sign" onClick={() => navigate('/login')}>Sign in</b></div><br />
+
+                        <button type="submit" >Register</button>
+                    </form>
+                    
+
+                </div>
+            </div>
         </>
     );
 };
