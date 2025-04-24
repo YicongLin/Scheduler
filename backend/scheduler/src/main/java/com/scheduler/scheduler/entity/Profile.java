@@ -28,7 +28,7 @@ public class Profile {
     private String avatarUrl;
 
     @OneToOne
-    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    @JoinColumn(name = "user_id", nullable = false, unique = true, updatable = false)
     private User user;
 
 }
