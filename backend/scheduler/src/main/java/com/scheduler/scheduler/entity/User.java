@@ -2,7 +2,6 @@ package com.scheduler.scheduler.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Entity
 @Table(name = "users")
@@ -12,7 +11,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 254)
+    @Column(nullable = false, unique = true, length = 254, updatable = false)
     private String email;
 
     @Column(nullable = false, length = 60)
@@ -31,10 +30,10 @@ public class User {
         this.createdAt = LocalDate.now();
     }
 
-    public User(String email, String rawPassword) {
+    public User(String email, String password) {
         this();
         this.email = email;
-        setPassword(rawPassword);
+        this.password = password;
         this.profile = new Profile(this);
     }
 
@@ -46,31 +45,21 @@ public class User {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String rawPassword) {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        this.password = encoder.encode(rawPassword);
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public LocalDate getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDate createdAt) {
-        this.createdAt = createdAt;
-    }
-
     public Profile getProfile() {
         return profile;
     }
-
 
     @Override
     public String toString() {
