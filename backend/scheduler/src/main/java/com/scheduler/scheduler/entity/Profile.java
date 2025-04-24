@@ -1,11 +1,16 @@
 package com.scheduler.scheduler.entity;
 
-import org.springframework.beans.factory.annotation.Value;
-
 import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Table(name = "profiles")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@ToString(exclude = "user")
 public class Profile {
 
     @Id
@@ -24,49 +29,5 @@ public class Profile {
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
-
-    public Profile() {
-        this.bio = ""; // Empty bio by default
-    }
-
-    public Profile(User user) {
-        this();
-        this.user = user;
-        this.userName = user.getEmail(); // Default username is email
-        this.avatarUrl = "temp";
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getBio() {
-        return bio;
-    }
-
-    public void setBio(String bio) {
-        this.bio = bio;
-    }
-
-    public String getAvatarUrl() {
-        return avatarUrl;
-    }
-
-    public void setAvatarUrl(String avatarUrl) {
-        this.avatarUrl = avatarUrl;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
 
 }

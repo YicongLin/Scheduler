@@ -1,10 +1,18 @@
 package com.scheduler.scheduler.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
+
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "users")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
+@ToString(exclude = "profile")
 public class User {
 
     @Id
@@ -26,47 +34,14 @@ public class User {
               fetch = FetchType.LAZY)
     private Profile profile;
 
-    public User() {
-        this.createdAt = LocalDate.now();
-    }
+    @PrePersist
+    public void prePersist() {
+        if (createdAt == null) {
+            createdAt = LocalDate.now();
+        }
 
-    public User(String email, String password) {
-        this();
-        this.email = email;
-        this.password = password;
-        this.profile = new Profile(this);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public LocalDate getCreatedAt() {
-        return createdAt;
-    }
-
-    public Profile getProfile() {
-        return profile;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", email='" + email + '\'' +
-                ", createdAt=" + createdAt +
-                '}';
+        if (profile != null && profile.getUser() == null) {
+            profile.setUser(this);
+        }
     }
 }
