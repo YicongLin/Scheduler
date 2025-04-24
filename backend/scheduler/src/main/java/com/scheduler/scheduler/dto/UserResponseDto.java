@@ -1,22 +1,11 @@
 package com.scheduler.scheduler.dto;
 
 public class UserResponseDto extends ResponseDto {
-    private Long id;
-    private String email;
+    private String token;
 
-    public UserResponseDto(boolean success, String message, Long id, String email) {
+    public UserResponseDto(boolean success, String message, String token) {
         super(success, message);
-        this.id = id;
-        this.email = email;
+        this.token = token;
     }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
     
 }
