@@ -6,6 +6,8 @@ import com.scheduler.scheduler.entity.Profile;
 import com.scheduler.scheduler.entity.User;
 import com.scheduler.scheduler.repository.UserRepository;
 
+import java.util.Optional;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,5 +48,20 @@ public class UserService {
         return new UserResponseDto(true, "Successfully register with given email", user.getId(), user.getEmail());
     }
 
+    public UserResponseDto login(UserAuthRequestDto request) {
+        Optional<User> optionalUser = userRepository.findByEmail(request.getEmail());
+
+        if (optionalUser.isEmpty()) {
+            return new UserResponseDto(false, "User not found", null, null);
+        }
+
+        User user = optionalUser.get();
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            return new UserResponseDto(false, "Incorrect password", null, null);
+        }
+
+        return new UserResponseDto(true, "Login successful", user.getId(), user.getEmail());
+    }
     
 }

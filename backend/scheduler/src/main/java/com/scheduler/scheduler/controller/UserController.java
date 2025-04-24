@@ -19,4 +19,9 @@ public class UserController {
     public UserResponseDto register(@RequestBody UserAuthRequestDto request) {
         return userService.register(request);
     }
+
+    @PostMapping("/login")
+    public UserResponseDto login(@RequestBody UserAuthRequestDto request) {
+        return userService.login(request);
+    }
 }
