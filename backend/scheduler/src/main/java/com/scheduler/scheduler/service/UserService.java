@@ -7,6 +7,9 @@ import com.scheduler.scheduler.entity.User;
 import com.scheduler.scheduler.repository.UserRepository;
 import com.scheduler.scheduler.util.JwtUtil;
 
+import io.jsonwebtoken.Claims;
+
+import java.util.Date;
 import java.util.Optional;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -44,8 +47,8 @@ public class UserService {
             .build();
 
         userRepository.save(user);
-
-        return new UserResponseDto(true, "Successfully register with given email", jwtUtil.generateToken(user.getId(), user.getEmail()));
+        
+        return new UserResponseDto(true, "Successfully register with given email", jwtUtil.generateToken(user.getId(), request.toClaims()));
     }
 
     public UserResponseDto login(UserAuthRequestDto request) {
@@ -61,7 +64,7 @@ public class UserService {
             return new UserResponseDto(false, "Incorrect password", null);
         }
 
-        return new UserResponseDto(true, "Login successful", jwtUtil.generateToken(user.getId(), user.getEmail()));
+        return new UserResponseDto(true, "Login successful", jwtUtil.generateToken(user.getId(), request.toClaims()));
     }
     
 }
