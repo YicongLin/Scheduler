@@ -10,6 +10,8 @@ import com.scheduler.scheduler.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -25,6 +27,12 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final SessionManager sessionManager;
+
+    /*
+     * Frontend redirects users from a registration 
+     * page to the main page after successful registration
+     */
 
     @Transactional
     public UserResponseDto register(UserAuthRequestDto request) {
@@ -48,7 +56,7 @@ public class UserService {
 
         userRepository.save(user);
         
-        return new UserResponseDto(true, "Successfully register with given email", jwtUtil.generateToken(user.getId(), request.toClaims()));
+        return new UserResponseDto(true, "Successfully register with given email", generateTokenWithSession(user, request));
     }
 
     public UserResponseDto login(UserAuthRequestDto request) {
@@ -64,7 +72,23 @@ public class UserService {
             return new UserResponseDto(false, "Incorrect password", null);
         }
 
-        return new UserResponseDto(true, "Login successful", jwtUtil.generateToken(user.getId(), request.toClaims()));
+        return new UserResponseDto(true, "Login successful", generateTokenWithSession(user, request));
     }
+
+    private String generateTokenWithSession(User user, UserAuthRequestDto request) {
+        Long userId = user.getId();
+
+        String sessionId = sessionManager.createSession(userId.toString(), request.getDeviceId());
+
+        if (sessionId == null) {
+            return null;
+        }
+
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("sessionId", sessionId);
+
+        return jwtUtil.generateToken(userId, request.toClaims(extraClaims));
+    }
+
     
 }

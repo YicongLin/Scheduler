@@ -3,32 +3,41 @@ package com.scheduler.scheduler.util;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
+
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 
 import java.util.Map;
 import java.util.Set;
 import java.security.Key;
 import java.util.Date;
 
+
 @Component
 public class JwtUtil {
-    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private Key key;
+
+    @Value("${security.jwt.secret}")
+    private String secret;
 
     @Value("${security.jwt.expirationMs}")
     private long jwtExpiration;
+
+    @PostConstruct
+    public void init() {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+    }
 
     public String generateToken(Long userId, Map<String, Object> claims) {
 
         JwtBuilder builder = Jwts.builder()
             .setSubject(userId.toString())
-            .setIssuer("scheduler")  
+            .setIssuer("scheduler")
             .setIssuedAt(new Date())
             .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
-            .signWith(key);
+            .signWith(key, SignatureAlgorithm.HS256);
+            // .signWith(key);
 
             if (claims != null) {
                 claims.forEach((key, value) -> {
@@ -50,28 +59,37 @@ public class JwtUtil {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
-
-    private boolean isTokenExpired(Claims claims) {
-        return claims.getExpiration().before(new Date());
-    }
-
-    public boolean isTokenValid(String token) {
         try {
-            Claims claims = extractAllClaims(token);
-            return !isTokenExpired(claims);
+            return Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            return null;
+        } catch (MalformedJwtException e) {
+            return null;
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
+    public boolean isTokenExpired(String token) {
+        try {
+            return getClaimFromToken(token,  Claims.EXPIRATION, Date.class).before(new Date());
+        } catch (ExpiredJwtException e) {
+            return true;
         } catch (Exception e) {
-            return false; // Invalid signature
+            return true;
         }
     }
 
     public Long extractUserId(String token) {
-        return Long.parseLong(extractAllClaims(token).getSubject());
+        try {
+            return Long.parseLong(extractAllClaims(token).getSubject());
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**
@@ -83,8 +101,11 @@ public class JwtUtil {
         try {
             final Claims claims = extractAllClaims(token);
             return claims.get(claimName, type);
+        } catch (ExpiredJwtException e) {
+            return null;
         } catch (Exception e) {
             return null;
         }
     }
+
 }

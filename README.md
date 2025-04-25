@@ -2,8 +2,12 @@
 By Kang Liu, Yicong Lin
 
 ## Versions
-- Java version: 24
+- Java: 24
 - PostgresSQL: 16
+- Docker: 28.0.1
+
+## Run
+- docker compose up -d
 
 ## Key Features
 
