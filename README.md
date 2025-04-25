@@ -1,6 +1,10 @@
 # Scheduler
 By Kang Liu, Yicong Lin
 
+## Versions
+- Java version: 24
+- PostgresSQL: 16
+
 ## Key Features
 
 This is an advanced to do list that comprises the functionality of the following
