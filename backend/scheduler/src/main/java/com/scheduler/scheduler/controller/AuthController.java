@@ -1,8 +1,8 @@
 
 package com.scheduler.scheduler.controller;
 
-import com.scheduler.scheduler.dto.UserAuthRequestDto;
-import com.scheduler.scheduler.dto.UserResponseDto;
+import com.scheduler.scheduler.dto.request.UserAuthRequestDto;
+import com.scheduler.scheduler.dto.response.user.UserResponseDto;
 import com.scheduler.scheduler.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;

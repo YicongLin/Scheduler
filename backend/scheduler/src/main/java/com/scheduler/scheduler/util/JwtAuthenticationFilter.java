@@ -1,11 +1,15 @@
 package com.scheduler.scheduler.util;
 
 import java.io.IOException;
+import java.util.Collections;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.scheduler.scheduler.service.SessionManager;
+
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -28,18 +32,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         
         String authHeader = request.getHeader("Authorization");
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7);
-            String userId = jwtUtil.extractUserId(token).toString();
-            String sessionId = jwtUtil.getClaimFromToken(token, "sessionId", String.class);
+        try {
 
-            if (jwtUtil.isTokenExpired(token) || !sessionManager.isSessionValid(userId, sessionId)) {
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                String token = authHeader.substring(7);
+                String userId = jwtUtil.extractUserId(token).toString();
+                String sessionId = jwtUtil.getClaimFromToken(token, "sessionId", String.class);
 
-                sessionManager.removeSessionBySession(userId, sessionId);
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                return;
+                if (jwtUtil.isTokenExpired(token) || !sessionManager.isSessionValid(userId, sessionId)) {
+
+                    sessionManager.removeSessionBySession(userId, sessionId);
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    return;
+                }
+
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                userId, null, Collections.emptyList());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
         }
+        
 
         filterChain.doFilter(request, response);
     }

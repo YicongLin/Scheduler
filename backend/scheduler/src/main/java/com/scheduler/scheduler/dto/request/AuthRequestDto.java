@@ -1,4 +1,4 @@
-package com.scheduler.scheduler.dto;
+package com.scheduler.scheduler.dto.request;
 
 import java.util.HashMap;
 import java.util.Map;

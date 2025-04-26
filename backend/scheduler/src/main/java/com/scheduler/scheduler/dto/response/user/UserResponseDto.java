@@ -1,5 +1,7 @@
-package com.scheduler.scheduler.dto;
+package com.scheduler.scheduler.dto.response.user;
 
+
+import com.scheduler.scheduler.dto.response.ResponseDto;
 
 import lombok.Getter;
 import lombok.Setter;

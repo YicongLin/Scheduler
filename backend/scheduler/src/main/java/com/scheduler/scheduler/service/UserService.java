@@ -1,7 +1,7 @@
 package com.scheduler.scheduler.service;
 
-import com.scheduler.scheduler.dto.UserAuthRequestDto;
-import com.scheduler.scheduler.dto.UserResponseDto;
+import com.scheduler.scheduler.dto.request.UserAuthRequestDto;
+import com.scheduler.scheduler.dto.response.user.UserResponseDto;
 import com.scheduler.scheduler.entity.Profile;
 import com.scheduler.scheduler.entity.User;
 import com.scheduler.scheduler.repository.UserRepository;
@@ -20,14 +20,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.*;
 
+import org.springframework.beans.factory.annotation.Value;
+
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final SessionManager sessionManager;
+
+    @Value("${spring.file.image-dir}")
+    private String defaultImagePath;
 
     /*
      * Frontend redirects users from a registration 
@@ -44,7 +49,7 @@ public class UserService {
         
         Profile profile = Profile.builder()
             .userName(email)
-            .avatarUrl("/image/default.jpg")
+            .avatarUrl(defaultImagePath + "/default.jpg")
             .bio("")
             .build();
 

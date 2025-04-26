@@ -1,4 +1,4 @@
-package com.scheduler.scheduler.dto;
+package com.scheduler.scheduler.dto.response;
 
 public class ResponseDto {
     private boolean success;
