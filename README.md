@@ -1,6 +1,14 @@
 # Scheduler
 By Kang Liu, Yicong Lin
 
+## Versions
+- Java: 24
+- PostgresSQL: 16
+- Docker: 28.0.1
+
+## Run
+- docker compose up -d
+
 ## Key Features
 
 This is an advanced to do list that comprises the functionality of the following
