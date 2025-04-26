@@ -2,7 +2,6 @@ package com.scheduler.scheduler.dto.response.user;
 
 
 import com.scheduler.scheduler.dto.response.ResponseDto;
-import com.scheduler.scheduler.entity.Profile;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -12,10 +11,9 @@ import lombok.Setter;
 public class UserResponseDto extends ResponseDto {
     private String token;
 
-     public UserResponseDto(String message, String token) {
-        super(token != null, message);
+    public UserResponseDto(boolean success, String message, String token) {
+        super(success, message);
         this.token = token;
     }
-  
     
 }

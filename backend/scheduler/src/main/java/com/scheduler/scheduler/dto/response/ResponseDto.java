@@ -1,10 +1,5 @@
 package com.scheduler.scheduler.dto.response;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
 public class ResponseDto {
     private boolean success;
     private String message;
@@ -14,4 +9,19 @@ public class ResponseDto {
         this.message = message;
     }
 
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 }
