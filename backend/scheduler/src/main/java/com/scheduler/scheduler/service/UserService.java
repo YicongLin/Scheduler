@@ -44,7 +44,7 @@ public class UserService {
         String email = request.getEmail();
 
         if (userRepository.existsByEmail(email)) {
-            return new UserResponseDto(false, "Email already exists", null);
+            return new UserResponseDto("Email already exists", null);
         }
         
         Profile profile = Profile.builder()
@@ -61,23 +61,23 @@ public class UserService {
 
         userRepository.save(user);
         
-        return new UserResponseDto(true, "Successfully register with given email", generateTokenWithSession(user, request));
+        return new UserResponseDto("Successfully register with given email", generateTokenWithSession(user, request));
     }
 
     public UserResponseDto login(UserAuthRequestDto request) {
         Optional<User> optionalUser = userRepository.findByEmail(request.getEmail());
 
         if (optionalUser.isEmpty()) {
-            return new UserResponseDto(false, "User not found", null);
+            return new UserResponseDto("User not found", null);
         }
 
         User user = optionalUser.get();
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            return new UserResponseDto(false, "Incorrect password", null);
+            return new UserResponseDto("Incorrect password", null);
         }
 
-        return new UserResponseDto(true, "Login successful", generateTokenWithSession(user, request));
+        return new UserResponseDto("Login successful", generateTokenWithSession(user, request));
     }
 
     private String generateTokenWithSession(User user, UserAuthRequestDto request) {
