@@ -7,15 +7,20 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.scheduler.scheduler.dto.response.profile.ProfileResponseDto;
+import com.scheduler.scheduler.dto.response.user.UserResponseDto;
 import com.scheduler.scheduler.service.SettingService;
+import com.scheduler.scheduler.service.UserService;
+
+import lombok.RequiredArgsConstructor;
 
 
 @RestController
 @RequestMapping("/setting")
+@RequiredArgsConstructor
 public class SettingController {
     
-    @Autowired
-    private SettingService settingService;
+    private final SettingService settingService;
+    private final UserService userService;
 
     @GetMapping("/profile")
     public ProfileResponseDto viewProfile(@RequestHeader("Authorization") String authorizationHeader) {
@@ -41,6 +46,14 @@ public class SettingController {
                                                 @RequestParam("userName") String userName) {
         String token = authorizationHeader.substring(7);
         return settingService.uploadUserName(token, userName);
+    }
+
+    @PostMapping("/reset-password")
+    public UserResponseDto resetPassword(@RequestHeader("Authorization") String authorizationHeader,
+                                                @RequestParam("old-password") String oldPassword,
+                                                @RequestParam("new-password") String newPassword) {
+        String token = authorizationHeader.substring(7);
+        return userService.resetPassword(token, oldPassword, newPassword);
     }
     
 }

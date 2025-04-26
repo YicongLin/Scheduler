@@ -37,7 +37,6 @@ public class JwtUtil {
             .setIssuedAt(new Date())
             .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
             .signWith(key, SignatureAlgorithm.HS256);
-            // .signWith(key);
 
             if (claims != null) {
                 claims.forEach((key, value) -> {

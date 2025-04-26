@@ -17,6 +17,7 @@ import java.util.Optional;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.*;
 
@@ -33,6 +34,22 @@ public class UserService {
 
     @Value("${spring.file.image-dir}")
     private String defaultImagePath;
+
+    private String generateTokenWithSession(User user, UserAuthRequestDto request) {
+        Long userId = user.getId();
+
+        String sessionId = sessionManager.createSession(userId.toString(), request.getDeviceId());
+
+        if (sessionId == null) {
+            return null;
+        }
+
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("sessionId", sessionId);
+
+        return jwtUtil.generateToken(userId, request.toClaims(extraClaims));
+    }
+
 
     /*
      * Frontend redirects users from a registration 
@@ -77,23 +94,38 @@ public class UserService {
             return new UserResponseDto(false, "Incorrect password", null);
         }
 
-        return new UserResponseDto(true, "Login successful", generateTokenWithSession(user, request));
+        return new UserResponseDto(true, "Login successfully", generateTokenWithSession(user, request));
     }
 
-    private String generateTokenWithSession(User user, UserAuthRequestDto request) {
-        Long userId = user.getId();
-
-        String sessionId = sessionManager.createSession(userId.toString(), request.getDeviceId());
-
-        if (sessionId == null) {
-            return null;
+    @Transactional
+    public UserResponseDto resetPassword(String token, String olderPassword, String newPassword) {
+        if (olderPassword == null || newPassword == null 
+            || newPassword.length() < 8
+            || newPassword.equals(olderPassword)) {
+            return new UserResponseDto(false, "Invalid password is given", null);
         }
 
-        Map<String, Object> extraClaims = new HashMap<>();
-        extraClaims.put("sessionId", sessionId);
+        Long userId = jwtUtil.extractUserId(token);
+        Optional<User> optionalUser = userRepository.findById(userId);
 
-        return jwtUtil.generateToken(userId, request.toClaims(extraClaims));
+        if (optionalUser.isEmpty()) {
+            return new UserResponseDto(false, "User not found", null);
+        }
+
+        User user = optionalUser.get();
+        String currPassword = user.getPassword();
+
+        if (!passwordEncoder.matches(olderPassword, currPassword)) {
+            return new UserResponseDto(false, "Incorrect password", null);
+        }
+
+        user.setPassword(newPassword);
+        userRepository.save(user);
+
+        // Invalidate all other valid sessions for given user (except current one)
+        sessionManager.removeAllSessionsExceptDevice(userId.toString(), jwtUtil.getClaimFromToken(token, "deviceId", String.class));
+
+        return new UserResponseDto(true, "Successfully update password", null);
     }
-
     
 }
