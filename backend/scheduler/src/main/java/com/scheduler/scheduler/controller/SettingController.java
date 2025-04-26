@@ -35,5 +35,12 @@ public class SettingController {
         String token = authorizationHeader.substring(7);
         return settingService.uploadBio(token, bio);
     }
+
+    @PostMapping("/upload-userName")
+    public ProfileResponseDto uploadUserName(@RequestHeader("Authorization") String authorizationHeader,
+                                                @RequestParam("userName") String userName) {
+        String token = authorizationHeader.substring(7);
+        return settingService.uploadUserName(token, userName);
+    }
     
 }
