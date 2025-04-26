@@ -28,5 +28,12 @@ public class SettingController {
         String token = authorizationHeader.substring(7);
         return settingService.uploadAvatar(token, file);
     }
+
+    @PostMapping("/upload-bio")
+    public ProfileResponseDto uploadBio(@RequestHeader("Authorization") String authorizationHeader,
+                                                @RequestParam("bio") String bio) {
+        String token = authorizationHeader.substring(7);
+        return settingService.uploadBio(token, bio);
+    }
     
 }

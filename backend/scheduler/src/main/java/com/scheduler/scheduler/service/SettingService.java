@@ -98,9 +98,8 @@ public class SettingService {
 
 
     @Transactional
-    public ProfileResponseDto updateBio(String token, String bio) {
+    public ProfileResponseDto uploadBio(String token, String bio) {
 
-        
         try {
             Profile profile = findValidProfileByUserId(jwtUtil.extractUserId(token));
 
@@ -114,8 +113,5 @@ public class SettingService {
         } catch (Exception e) {
             return new ProfileResponseDto("Unable to upate bio", null);
         }
-
-        
-
     }
 }
