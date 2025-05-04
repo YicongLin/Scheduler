@@ -3,10 +3,10 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-pom.xml
-src/main/resources/application.yaml
-docker/docker-compose.yml
-docker/redis/
+# pom.xml
+# src/main/resources/application.yaml
+# docker/docker-compose.yml
+# docker/redis/
 
 ### STS ###
 .apt_generated
