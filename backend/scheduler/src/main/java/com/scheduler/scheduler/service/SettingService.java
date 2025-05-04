@@ -98,10 +98,13 @@ public class SettingService {
 
 
     @Transactional
-    public ProfileResponseDto updateBio(String token, String bio) {
+    public ProfileResponseDto uploadBio(String token, String bio) {
 
-        
         try {
+            if (bio == null) {
+                return new ProfileResponseDto("Not valid bio", null);
+            }
+
             Profile profile = findValidProfileByUserId(jwtUtil.extractUserId(token));
 
             if (profile == null) {
@@ -114,8 +117,27 @@ public class SettingService {
         } catch (Exception e) {
             return new ProfileResponseDto("Unable to upate bio", null);
         }
+    }
 
-        
+    @Transactional
+    public ProfileResponseDto uploadUserName(String token, String userName) {
 
+        try {
+            if (userName == null || userName.length() == 0) {
+                return new ProfileResponseDto("No Empty name allowed", null);
+            }
+
+            Profile profile = findValidProfileByUserId(jwtUtil.extractUserId(token));
+
+            if (profile == null) {
+                return new ProfileResponseDto("Profile not found", null);
+            }
+
+            profile.setUserName(userName);
+            profileRepository.save(profile);
+            return new ProfileResponseDto("Successfully update username", profile);
+        } catch (Exception e) {
+            return new ProfileResponseDto("Unable to upate username", null);
+        }
     }
 }

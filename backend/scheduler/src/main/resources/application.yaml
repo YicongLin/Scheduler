@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: scheduler
+
+  datasource:
+    name: scheduler
+    admin-url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://localhost:5432/${spring.datasource.name}
+    username: postgres
+    password: password
+
+  flyway:
+    enabled: false 
+    clean-disabled: true
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  redis:
+    host: localhost
+    port: 6379
+    password: paSSWord
+
+  session:
+    store-type: redis
+    timeout: 86400
+  
+  file:
+    image-dir: ./src/main/resources/image
+
+security:
+  jwt: 
+    expirationMs: 86400000 # 24 * 60 * 60 * 1000
+    secret: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/
+
+
+
+
+  
