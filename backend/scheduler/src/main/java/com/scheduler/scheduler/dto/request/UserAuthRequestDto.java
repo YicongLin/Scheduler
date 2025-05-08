@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class UserAuthRequestDto extends AuthRequestDto {
+    private String username;
     private String email;
     private String password;
     private String deviceId;

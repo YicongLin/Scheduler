@@ -6,7 +6,8 @@ target/
 # pom.xml
 # src/main/resources/application.yaml
 # docker/docker-compose.yml
-# docker/redis/
+docker/redis
+*.rdb
 
 ### STS ###
 .apt_generated

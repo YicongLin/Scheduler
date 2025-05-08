@@ -59,13 +59,14 @@ public class UserService {
     @Transactional
     public UserResponseDto register(UserAuthRequestDto request) {
         String email = request.getEmail();
+        String username = request.getUsername();
 
         if (userRepository.existsByEmail(email)) {
             return new UserResponseDto(false, "Email already exists", null);
         }
         
         Profile profile = Profile.builder()
-            .userName(email)
+            .userName(username)
             .avatarUrl(defaultImagePath + "/default.jpg")
             .bio("")
             .build();
