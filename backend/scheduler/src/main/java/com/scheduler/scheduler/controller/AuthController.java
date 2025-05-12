@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
+@CrossOrigin(origins = "http://localhost:3000")
 public class AuthController {
     
     @Autowired
@@ -23,5 +24,10 @@ public class AuthController {
     @PostMapping("/login")
     public UserResponseDto login(@RequestBody UserAuthRequestDto request) {
         return userService.login(request);
+    }
+
+    @PostMapping("/logout")
+    public UserResponseDto logout(@RequestHeader("Authorization") String authHeader) {
+        return userService.logout(authHeader);
     }
 }

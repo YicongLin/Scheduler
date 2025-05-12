@@ -1,5 +1,7 @@
+import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { v4 as uuidv4 } from 'uuid';
 
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -8,8 +10,43 @@ const Login = () => {
     const navigate = useNavigate();
 
     // API call to register user
-    const login = () => {
+    const login = async (e) => {
+        e.preventDefault();
 
+        if (!email || !password) {
+            alert("Please fill in all fields");
+            return;
+        }
+
+        if (password.length < 8) {
+            alert("Password must be at least 8 characters long");
+            return;
+        }
+        
+        const deviceId = uuidv4();
+        const loginData = {
+            "email": email,
+            "password": password,
+            "deviceId": deviceId
+        }
+
+        try {
+            const response = await axios.post("http://localhost:8080/auth/login", loginData, {
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+            console.log(response.data);
+            if (!response.data.token) {
+                alert(response.data.message);
+                return;
+            }
+            localStorage.setItem('token', response.data.token);
+            navigate('/dashboard');
+        } catch (error) {
+            console.error("Login error:", error.response?.data || error.message);
+            alert("Login failed");
+        }
     }
     
     return (
