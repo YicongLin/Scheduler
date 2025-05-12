@@ -10,10 +10,7 @@ const Dashboard = () => {
         const storedToken = localStorage.getItem('token');
         setToken(storedToken);
     }, [navigate]);
-    // API call to register user
-    // const dashboard = () => {
-
-    // }
+    
     if (!token) {
         return (
             <>
@@ -32,14 +29,15 @@ const Dashboard = () => {
             if (token) {
                 const response = await axios.post("http://localhost:8080/auth/logout", {}, authHeader);
                 console.log(response.data);
-
+                localStorage.removeItem('token');
+                navigate('/login');
             }
         } catch (error) {
-            
+            console.error("Logout error:", error.response?.data || error.message);
+            alert("Logout failed");
         }
         
-        localStorage.removeItem('token');
-        navigate('/login');
+        
     }
     
     return (
