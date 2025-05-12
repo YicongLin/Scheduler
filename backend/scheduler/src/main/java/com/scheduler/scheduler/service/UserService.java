@@ -17,7 +17,6 @@ import java.util.Optional;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import lombok.*;
 
@@ -72,6 +71,7 @@ public class UserService {
             .build();
 
         User user = User.builder()
+            .username(username)
             .email(email)
             .password(passwordEncoder.encode(request.getPassword()))
             .profile(profile)
@@ -96,6 +96,25 @@ public class UserService {
         }
 
         return new UserResponseDto(true, "Login successfully", generateTokenWithSession(user, request));
+    }
+
+    public UserResponseDto logout(String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return new UserResponseDto(false, "Invalid authentication header", authHeader);
+        }
+
+        String token = authHeader.substring(7);
+        try {
+            Long userId = jwtUtil.extractUserId(token);
+            String sessionId = jwtUtil.getClaimFromToken(token, "sessionId", String.class);
+            
+            if (sessionId != null) {
+                sessionManager.removeAllSessions(userId.toString());
+            }
+        } catch (Exception e) {
+            return new UserResponseDto(false, "Invalid token", token);
+        }
+        return new UserResponseDto(true, "Logout successfully", null);
     }
 
     @Transactional

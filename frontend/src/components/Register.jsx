@@ -32,16 +32,24 @@ const Register = () => {
 
         const deviceId = uuidv4();
         const registerData = {
-            username,
-            email,
-            password,
-            deviceId
+            "username": username,
+            "email": email,
+            "password": password,
+            "deviceId": deviceId
         }
         console.log(deviceId);
         try {
-            console.log("start sending request...")
-            const response = await axios.post("http://localhost:8080/auth/register", registerData)
+            console.log("start sending request...");
+            const response = await axios.post("http://localhost:8080/auth/register", registerData, {
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
             console.log(response.data);
+            if (!response.data.token) {
+                alert(response.data.message);
+                return;
+            }
             localStorage.setItem('token', response.data.token);
             navigate('/dashboard');
         } catch (error) {

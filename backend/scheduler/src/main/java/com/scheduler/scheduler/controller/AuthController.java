@@ -25,4 +25,9 @@ public class AuthController {
     public UserResponseDto login(@RequestBody UserAuthRequestDto request) {
         return userService.login(request);
     }
+
+    @PostMapping("/logout")
+    public UserResponseDto logout(@RequestHeader("Authorization") String authHeader) {
+        return userService.logout(authHeader);
+    }
 }
