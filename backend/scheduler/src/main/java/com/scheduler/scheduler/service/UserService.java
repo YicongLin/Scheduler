@@ -147,5 +147,16 @@ public class UserService {
 
         return new UserResponseDto(true, "Successfully update password", null);
     }
+
+    // @Transactional
+    // public UserResponseDto forgotPassword(String email) {
+    //     Optional<User> optionalUser = userRepository.findByEmail(email);
+
+    //     if (optionalUser.isEmpty()) {
+    //         return new UserResponseDto(false, "User not found", null);
+    //     }
+
+
+    // }
     
 }
