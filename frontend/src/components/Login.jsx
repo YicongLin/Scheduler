@@ -66,7 +66,7 @@ const Login = () => {
                         <label>Password</label>
                         <input type="password" value={password} onChange={val => setPassword(val.target.value)} /> 
                 
-                        <label className="forgot">Forgot password?</label>
+                        <label className="forgot" onClick={() => navigate('/forgotPassword')}>Forgot password?</label>
 
                         <br />
                         <div>Haven't got an account? <b className="sign" onClick={() => navigate('/register')}>Sign up</b></div><br />

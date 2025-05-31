@@ -1,5 +1,6 @@
 package com.scheduler.scheduler.service;
 
+import com.scheduler.scheduler.dto.request.RedeemRequestDto;
 import com.scheduler.scheduler.dto.request.UserAuthRequestDto;
 import com.scheduler.scheduler.dto.response.user.UserResponseDto;
 import com.scheduler.scheduler.entity.Profile;
@@ -9,10 +10,12 @@ import com.scheduler.scheduler.util.JwtUtil;
 
 import io.jsonwebtoken.Claims;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,6 +33,7 @@ public class UserService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final SessionManager sessionManager;
+    private final EmailService emailService;
 
     @Value("${spring.file.image-dir}")
     private String defaultImagePath;
@@ -146,6 +150,55 @@ public class UserService {
         sessionManager.removeAllSessionsExceptDevice(userId.toString(), jwtUtil.getClaimFromToken(token, "deviceId", String.class));
 
         return new UserResponseDto(true, "Successfully update password", null);
+    }
+
+    @Transactional
+    public UserResponseDto sendResetPasswordLink(String email) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+
+        if (optionalUser.isEmpty()) {
+            return new UserResponseDto(false, "User not found", null);
+        }
+
+        User user = optionalUser.get();
+        String resetToken = UUID.randomUUID().toString();
+        LocalDateTime expiry = LocalDateTime.now().plusMinutes(10);
+
+        user.setResetToken(resetToken);
+        user.setResetTokenExpiry(expiry);
+        userRepository.save(user);
+
+        String resetLink = "http://localhost:3000/forgotPassword/redeem?token=" + resetToken;
+        emailService.sendEmail(email, resetLink);
+
+        return new UserResponseDto(true, "Reset password email sent", null);
+    }
+
+    @Transactional
+    public UserResponseDto redeemPassword(RedeemRequestDto request) {
+        String newPassword = request.getPassword();
+        if (newPassword == null || newPassword.length() < 8) {
+            return new UserResponseDto(false, "Password must be at least 8 characters", null);
+        }
+
+        Optional<User> optionalUser = userRepository.findByResetToken(request.getResetToken());
+
+        if (optionalUser.isEmpty()) {
+            return new UserResponseDto(false, "Invalid or expired token", null);
+        }
+
+        User user = optionalUser.get();
+
+        if (user.getResetTokenExpiry() == null || user.getResetTokenExpiry().isBefore(LocalDateTime.now())) {
+            return new UserResponseDto(false, "Token has expired", null);
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setResetToken(null);
+        user.setResetTokenExpiry(null);
+        userRepository.save(user);
+
+        return new UserResponseDto(true, "Password successfully updated", null);
     }
     
 }

@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   redis:
     image: redis:7
@@ -11,3 +10,14 @@ services:
       - ./docker/redis/data:/data
     command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
 
+  postgres:
+    image: postgres:16
+    container_name: postgres-db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./docker/postgres/data:/var/lib/postgresql/data
