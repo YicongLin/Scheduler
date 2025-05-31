@@ -1,6 +1,7 @@
 
 package com.scheduler.scheduler.controller;
 
+import com.scheduler.scheduler.dto.request.RedeemRequestDto;
 import com.scheduler.scheduler.dto.request.UserAuthRequestDto;
 import com.scheduler.scheduler.dto.response.user.UserResponseDto;
 import com.scheduler.scheduler.service.UserService;
@@ -29,5 +30,15 @@ public class AuthController {
     @PostMapping("/logout")
     public UserResponseDto logout(@RequestHeader("Authorization") String authHeader) {
         return userService.logout(authHeader);
+    }
+
+    @PostMapping("/forgotPassword")
+    public UserResponseDto forgotPasswordPage(@RequestParam String email) {
+        return userService.sendResetPasswordLink(email);
+    }
+
+    @PostMapping("/forgotPassword/redeem")
+    public UserResponseDto redeemPassword(@RequestBody RedeemRequestDto request) {
+        return userService.redeemPassword(request);
     }
 }
